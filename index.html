@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="柯灝亮 Ke Hao-Liang — AI 工程師個人履歷｜LLM 部署、RAG 系統、模型微調" />
+<title>柯灝亮 · AI Engineer Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Reset & base ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  :root {
+    --bg-0: #05060c;
+    --bg-1: #0a0d1a;
+    --bg-2: #11172a;
+    --surface: rgba(20, 28, 52, 0.55);
+    --surface-2: rgba(28, 38, 70, 0.65);
+    --border: rgba(120, 200, 255, 0.18);
+    --border-strong: rgba(120, 200, 255, 0.4);
+    --text-0: #eaf2ff;
+    --text-1: #b6c4e0;
+    --text-2: #7e8bab;
+    --cyan: #22d3ee;
+    --cyan-glow: rgba(34, 211, 238, 0.45);
+    --violet: #a855f7;
+    --violet-glow: rgba(168, 85, 247, 0.4);
+    --pink: #ec4899;
+    --emerald: #34d399;
+    --grad-main: linear-gradient(135deg, #22d3ee 0%, #a855f7 60%, #ec4899 100%);
+    --grad-soft: linear-gradient(135deg, rgba(34,211,238,0.18), rgba(168,85,247,0.18));
+    --shadow-1: 0 10px 40px -10px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 30px -8px var(--cyan-glow);
+    --radius: 16px;
+    --maxw: 1180px;
+  }
+  body {
+    font-family: "Noto Sans TC", "Inter", system-ui, -apple-system, "PingFang TC", sans-serif;
+    background: var(--bg-0);
+    color: var(--text-0);
+    line-height: 1.7;
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(1100px 600px at 8% -10%, rgba(34, 211, 238, 0.18), transparent 60%),
+      radial-gradient(900px 700px at 100% 20%, rgba(168, 85, 247, 0.20), transparent 65%),
+      radial-gradient(700px 600px at 50% 110%, rgba(236, 72, 153, 0.12), transparent 60%),
+      var(--bg-0);
+    z-index: -2;
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(120, 200, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120, 200, 255, 0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 0%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 75%);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  ul { list-style: none; }
+  img { max-width: 100%; display: block; }
+
+  /* ===== Layout ===== */
+  .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  section { padding: 96px 0; position: relative; }
+  section:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 50%; bottom: 0;
+    width: 90%;
+    max-width: 800px;
+    height: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+  }
+
+  /* ===== Canvas BG ===== */
+  #neural-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  /* ===== Nav ===== */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(5, 6, 12, 0.55);
+    border-bottom: 1px solid var(--border);
+    transition: background .3s, border-color .3s;
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: "Orbitron", monospace;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 16px;
+  }
+  .brand-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 12px var(--cyan-glow);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .55; transform: scale(1.25); }
+  }
+  .nav-links {
+    display: flex; gap: 6px;
+    align-items: center;
+  }
+  .nav-links a {
+    padding: 8px 14px;
+    font-size: 14px;
+    color: var(--text-1);
+    border-radius: 999px;
+    transition: all .25s;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--text-0); background: var(--surface); }
+  .nav-links a.active { color: var(--cyan); background: rgba(34, 211, 238, 0.08); }
+  .nav-toggle {
+    display: none;
+    width: 40px; height: 40px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+  }
+  .nav-toggle span {
+    position: absolute;
+    left: 10px; right: 10px;
+    height: 2px;
+    background: var(--text-0);
+    transition: transform .3s, opacity .3s, top .3s, bottom .3s;
+  }
+  .nav-toggle span:nth-child(1) { top: 13px; }
+  .nav-toggle span:nth-child(2) { top: 19px; }
+  .nav-toggle span:nth-child(3) { top: 25px; }
+  .nav-toggle.open span:nth-child(1) { top: 19px; transform: rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { top: 19px; transform: rotate(-45deg); }
+
+  /* ===== Hero ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 120px;
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: var(--surface);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    color: var(--cyan);
+    margin-bottom: 22px;
+  }
+  .hero-eyebrow::before {
+    content: "";
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan-glow);
+  }
+  .hero h1 {
+    font-family: "Orbitron", "Noto Sans TC", sans-serif;
+    font-size: clamp(40px, 7vw, 80px);
+    line-height: 1.05;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    margin-bottom: 18px;
+  }
+  .hero h1 .grad {
+    background: var(--grad-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+  }
+  .hero h2 {
+    font-size: clamp(18px, 2.4vw, 24px);
+    font-weight: 500;
+    color: var(--text-1);
+    margin-bottom: 28px;
+  }
+  .hero h2 .accent { color: var(--cyan); font-family: "JetBrains Mono", monospace; }
+  .hero p.lede {
+    font-size: 16px;
+    color: var(--text-1);
+    max-width: 580px;
+    margin-bottom: 36px;
+  }
+  .hero-cta {
+    display: flex; flex-wrap: wrap;
+    gap: 14px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
+    border: 1px solid transparent;
+  }
+  .btn-primary {
+    background: var(--grad-main);
+    color: #02040a;
+    box-shadow: 0 8px 24px -6px rgba(34, 211, 238, 0.45);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 32px -6px rgba(168, 85, 247, 0.55); }
+  .btn-ghost {
+    background: var(--surface);
+    border-color: var(--border-strong);
+    color: var(--text-0);
+  }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  /* Hero card */
+  .hero-card {
+    position: relative;
+    padding: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+  }
+  .hero-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: var(--grad-main);
+    border-radius: inherit;
+    opacity: 0.25;
+    z-index: -1;
+    filter: blur(20px);
+  }
+  .hero-card .corner {
+    position: absolute;
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--cyan);
+  }
+  .hero-card .corner.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+  .hero-card .corner.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+  .hero-card .corner.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+  .hero-card .corner.br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+  .terminal-head {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .terminal-head .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .terminal-head .red { background: #ff5f56; }
+  .terminal-head .yel { background: #ffbd2e; }
+  .terminal-head .grn { background: #27c93f; }
+  .terminal-head .file {
+    margin-left: auto;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    color: var(--text-2);
+  }
+  .terminal {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13.5px;
+    line-height: 1.85;
+    color: var(--text-1);
+  }
+  .terminal .key { color: var(--cyan); }
+  .terminal .val { color: var(--text-0); }
+  .terminal .str { color: var(--emerald); }
+  .terminal .num { color: var(--pink); }
+  .terminal .com { color: var(--text-2); font-style: italic; }
+  .terminal .cursor {
+    display: inline-block;
+    width: 8px; height: 16px;
+    background: var(--cyan);
+    vertical-align: middle;
+    margin-left: 2px;
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ===== Section headings ===== */
+  .sec-head {
+    margin-bottom: 56px;
+  }
+  .sec-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    color: var(--cyan);
+    margin-bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sec-tag::before {
+    content: "";
+    display: inline-block;
+    width: 24px; height: 1px;
+    background: var(--cyan);
+  }
+  .sec-title {
+    font-family: "Orbitron", "Noto Sans TC", sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+  }
+  .sec-title .grad {
+    background: var(--grad-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .sec-sub {
+    color: var(--text-1);
+    margin-top: 10px;
+    max-width: 720px;
+  }
+
+  /* ===== About ===== */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: border-color .3s, transform .3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-3px);
+  }
+  .card p + p { margin-top: 14px; color: var(--text-1); }
+  .card p strong { color: var(--cyan); font-weight: 600; }
+
+  .info-list {
+    display: flex; flex-direction: column;
+    gap: 16px;
+  }
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .info-item:last-child { border: none; padding-bottom: 0; }
+  .info-item .lbl {
+    color: var(--text-2);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .info-item .val {
+    color: var(--text-0);
+    font-size: 14px;
+    text-align: right;
+    word-break: break-word;
+  }
+
+  /* ===== Skills ===== */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    transition: all .3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--grad-main);
+    opacity: 0.6;
+  }
+  .skill-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-4px);
+    box-shadow: 0 18px 50px -16px rgba(34, 211, 238, 0.25);
+  }
+  .skill-head {
+    display: flex; align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .skill-icon {
+    width: 44px; height: 44px;
+    display: grid; place-items: center;
+    border-radius: 12px;
+    background: var(--grad-soft);
+    border: 1px solid var(--border);
+    color: var(--cyan);
+  }
+  .skill-icon svg { width: 22px; height: 22px; }
+  .skill-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-0);
+  }
+  .skill-list li {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 10px;
+    color: var(--text-1);
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+  .skill-list li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 10px;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan-glow);
+    transform: rotate(45deg);
+  }
+  .tag-row {
+    display: flex; flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--border);
+  }
+  .tag {
+    padding: 4px 10px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11.5px;
+    color: var(--cyan);
+    background: rgba(34, 211, 238, 0.08);
+    border: 1px solid rgba(34, 211, 238, 0.25);
+    border-radius: 6px;
+  }
+  .tag.v { color: var(--violet); background: rgba(168, 85, 247, 0.08); border-color: rgba(168, 85, 247, 0.25); }
+  .tag.p { color: var(--pink); background: rgba(236, 72, 153, 0.08); border-color: rgba(236, 72, 153, 0.25); }
+
+  /* ===== Projects ===== */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .proj-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    transition: all .3s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .proj-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--grad-main);
+    opacity: 0.7;
+  }
+  .proj-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-4px);
+    box-shadow: 0 22px 50px -20px rgba(168, 85, 247, 0.35);
+  }
+  .proj-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .proj-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text-0);
+    line-height: 1.35;
+  }
+  .proj-date {
+    flex-shrink: 0;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11.5px;
+    color: var(--text-2);
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .proj-stack {
+    margin: 14px 0 16px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12.5px;
+    color: var(--violet);
+  }
+  .proj-list li {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 10px;
+    color: var(--text-1);
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+  .proj-list li::before {
+    content: "▸";
+    position: absolute;
+    left: 0; top: 0;
+    color: var(--cyan);
+    font-weight: bold;
+  }
+
+  /* ===== Education / Experience timeline ===== */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 10px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--cyan), var(--violet), transparent);
+  }
+  .tl-item { position: relative; padding-bottom: 32px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item::before {
+    content: "";
+    position: absolute;
+    left: -28px; top: 8px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--bg-0);
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 12px var(--cyan-glow);
+  }
+  .tl-date {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12.5px;
+    color: var(--cyan);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .tl-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-0);
+    margin-bottom: 4px;
+  }
+  .tl-org {
+    font-size: 14px;
+    color: var(--text-1);
+    margin-bottom: 10px;
+  }
+  .tl-org .sep { color: var(--text-2); margin: 0 8px; }
+  .tl-body {
+    color: var(--text-1);
+    font-size: 14.5px;
+    line-height: 1.7;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  /* ===== Certs / Languages ===== */
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .cert-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    transition: all .3s ease;
+  }
+  .cert-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+  .cert-logo {
+    flex-shrink: 0;
+    width: 52px; height: 52px;
+    border-radius: 10px;
+    background: var(--grad-soft);
+    display: grid; place-items: center;
+    color: var(--cyan);
+    font-family: "Orbitron", monospace;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .cert-name { font-weight: 700; font-size: 15px; color: var(--text-0); }
+  .cert-meta { color: var(--text-2); font-size: 13px; margin-top: 4px; }
+
+  .lang-row {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .lang-row:last-child { border: none; }
+  .lang-name { font-weight: 600; color: var(--text-0); }
+  .lang-bar { height: 6px; background: rgba(120,200,255,0.08); border-radius: 999px; overflow: hidden; position: relative; }
+  .lang-bar > i {
+    display: block; height: 100%;
+    background: var(--grad-main);
+    border-radius: 999px;
+    box-shadow: 0 0 12px var(--cyan-glow);
+  }
+  .lang-level { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--text-2); }
+
+  /* ===== Contact ===== */
+  .contact-card {
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 56px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--grad-soft);
+    opacity: 0.4;
+    z-index: -1;
+  }
+  .contact-card h3 {
+    font-family: "Orbitron", "Noto Sans TC", sans-serif;
+    font-size: clamp(26px, 3.6vw, 38px);
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+  .contact-card p { color: var(--text-1); max-width: 560px; margin: 0 auto 32px; }
+  .contact-links { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+
+  /* ===== Footer ===== */
+  footer {
+    padding: 30px 0 40px;
+    text-align: center;
+    color: var(--text-2);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  /* ===== Reveal animations ===== */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal[data-delay="1"] { transition-delay: .1s; }
+  .reveal[data-delay="2"] { transition-delay: .2s; }
+  .reveal[data-delay="3"] { transition-delay: .3s; }
+  .reveal[data-delay="4"] { transition-delay: .4s; }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 900px) {
+    .hero-inner, .about-grid, .two-col { grid-template-columns: 1fr; }
+    .skills-grid, .projects-grid, .cert-grid { grid-template-columns: 1fr; }
+    .hero { padding-top: 110px; min-height: auto; padding-bottom: 60px;}
+    section { padding: 72px 0; }
+    .sec-head { margin-bottom: 36px; }
+
+    .nav-toggle { display: block; }
+    .nav-links {
+      position: fixed;
+      top: 64px; left: 0; right: 0;
+      flex-direction: column;
+      gap: 0;
+      background: rgba(5,6,12,0.96);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+      transform: translateY(-110%);
+      transition: transform .3s ease;
+    }
+    .nav-links.open { transform: translateY(0); }
+    .nav-links a {
+      padding: 14px 24px;
+      border-radius: 0;
+      text-align: center;
+      width: 100%;
+    }
+    .nav-links a.active { background: rgba(34,211,238,0.06); }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 0 18px; }
+    .card, .skill-card, .proj-card, .hero-card { padding: 22px; }
+    .info-item { flex-direction: column; gap: 4px; }
+    .info-item .val { text-align: left; }
+    .lang-row { grid-template-columns: 80px 1fr 50px; gap: 10px; }
+    .proj-head { flex-direction: column; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+  <canvas id="neural-bg"></canvas>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <a href="#top" class="brand">
+        <span class="brand-dot"></span>
+        <span>KE.HL<span style="color:var(--cyan)">_</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">關於</a></li>
+        <li><a href="#skills">技能</a></li>
+        <li><a href="#projects">專案</a></li>
+        <li><a href="#education">學經歷</a></li>
+        <li><a href="#certs">證照</a></li>
+        <li><a href="#contact">聯繫</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="切換選單">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="wrap hero-inner">
+      <div class="hero-text">
+        <span class="hero-eyebrow reveal">// NYCU × PHISON AI Architect Program</span>
+        <h1 class="reveal" data-delay="1">
+          柯灝亮<br />
+          <span class="grad">Ke Hao-Liang</span>
+        </h1>
+        <h2 class="reveal" data-delay="2">
+          <span class="accent">AI Engineer</span> · 專注於 LLM 部署、RAG 系統與模型微調
+        </h2>
+        <p class="lede reveal" data-delay="3">
+          國立中央大學光電科學與工程學系碩士。以工程思維結合實證導向，
+          將複雜業務問題轉化為可落地的 AI 解決方案。
+          目前正於「群聯 × 陽明交大 AI 架構師培訓」深耕生成式 AI 技術棧。
+        </p>
+        <div class="hero-cta reveal" data-delay="4">
+          <a href="#projects" class="btn btn-primary">
+            查看專案
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#contact" class="btn btn-ghost">
+            聯絡我
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-card reveal" data-delay="3">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <div class="terminal-head">
+          <span class="dot red"></span>
+          <span class="dot yel"></span>
+          <span class="dot grn"></span>
+          <span class="file">~/profile.json</span>
+        </div>
+<pre class="terminal">{
+  <span class="key">"name"</span>: <span class="str">"Ke Hao-Liang"</span>,
+  <span class="key">"role"</span>: <span class="str">"AI Engineer"</span>,
+  <span class="key">"stack"</span>: [
+    <span class="str">"LLM Deployment"</span>,
+    <span class="str">"RAG Systems"</span>,
+    <span class="str">"LoRA Fine-tuning"</span>
+  ],
+  <span class="key">"toolkit"</span>: {
+    <span class="key">"lang"</span>: <span class="str">"Python"</span>,
+    <span class="key">"dl"</span>: <span class="str">"PyTorch"</span>,
+    <span class="key">"serving"</span>: [<span class="str">"vLLM"</span>, <span class="str">"Ollama"</span>],
+    <span class="key">"ops"</span>: [<span class="str">"Docker"</span>, <span class="str">"n8n"</span>]
+  },
+  <span class="key">"location"</span>: <span class="str">"Hsinchu, TW"</span>,
+  <span class="key">"status"</span>: <span class="str">"Open to opportunities"</span><span class="cursor"></span>
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="sec-tag">01 — Profile</div>
+        <h2 class="sec-title">關於 <span class="grad">我</span></h2>
+        <p class="sec-sub">以工程師的視角思考 AI，以實證導向解決真實世界中的落地問題。</p>
+      </div>
+
+      <div class="about-grid">
+        <div class="card reveal">
+          <p>
+            我是 <strong>柯灝亮</strong>，國立中央大學光電科學與工程學系碩士，
+            目前專注於將大型語言模型 (LLM) 與檢索增強生成 (RAG) 等
+            生成式 AI 技術導入產業情境。
+          </p>
+          <p>
+            在碩士論文期間，我以 <strong>MATLAB → Python</strong> 全面重構光波導模擬演算法，
+            並透過 Physics-guided screening 自動化探索數十萬組參數空間，
+            培養出將工程問題流程化、模組化的習慣。
+          </p>
+          <p>
+            參與 <strong>群聯 × 陽明交大 AI 架構師培訓</strong> 後，
+            我系統性建構從 vLLM 服務部署、LoRA 微調、向量檢索到 AI Agent 的完整技術棧，
+            並以多個自主專案驗證每一塊技術在真實場景下的可行性。
+          </p>
+          <p>
+            習慣以結構化思維拆解問題，重視團隊溝通協作與持續學習，
+            期能以工程思維為團隊帶來扎實、可量測、可維護的 AI 落地成果。
+          </p>
+        </div>
+
+        <div class="card reveal" data-delay="1">
+          <ul class="info-list">
+            <li class="info-item">
+              <span class="lbl">Name</span>
+              <span class="val">柯灝亮 / Ke Hao-Liang</span>
+            </li>
+            <li class="info-item">
+              <span class="lbl">Role</span>
+              <span class="val">AI Engineer</span>
+            </li>
+            <li class="info-item">
+              <span class="lbl">Education</span>
+              <span class="val">NCU 光電工程 M.S.</span>
+            </li>
+            <li class="info-item">
+              <span class="lbl">Location</span>
+              <span class="val">新竹 Hsinchu, TW</span>
+            </li>
+            <li class="info-item">
+              <span class="lbl">Email</span>
+              <span class="val"><a href="mailto:baodianliang@gmail.com" style="color:var(--cyan)">baodianliang@gmail.com</a></span>
+            </li>
+            <li class="info-item">
+              <span class="lbl">Status</span>
+              <span class="val" style="color:var(--emerald)">● 可立即上班</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="sec-tag">02 — Stack</div>
+        <h2 class="sec-title">技能 <span class="grad">堆疊</span></h2>
+        <p class="sec-sub">從推理服務、微調訓練到工作流自動化，完整覆蓋現代生成式 AI 應用所需的關鍵環節。</p>
+      </div>
+
+      <div class="skills-grid">
+        <div class="skill-card reveal">
+          <div class="skill-head">
+            <div class="skill-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg>
+            </div>
+            <div class="skill-name">人工智慧應用</div>
+          </div>
+          <ul class="skill-list">
+            <li>熟悉 <b>LLM 部署</b>，以 vLLM、Ollama 架設本地模型服務，具備 Streaming 推理與效能量測 (TTFT/TPS) 經驗</li>
+            <li>熟悉 <b>LLM 微調</b>，使用 LoRA / PEFT 進行監督式微調與訓練資料生成</li>
+            <li>熟悉 <b>RAG 系統</b> 開發，含 embedding、Hybrid Search 與檢索品質強化</li>
+            <li>理解 <b>AI Agent</b> 架構與設計，熟悉 MCP 與 Tool Calling 之外部工具機制</li>
+            <li>掌握 <b>Transformer</b> 與自注意力機制原理</li>
+            <li><b>Prompt Engineering</b>：提示詞設計、Chain-of-Thought、In-Context Learning</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">#人工智慧</span><span class="tag">#LLM</span>
+            <span class="tag v">#RAG</span><span class="tag v">#Agent</span>
+            <span class="tag p">#PromptEng</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" data-delay="1">
+          <div class="skill-head">
+            <div class="skill-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <div class="skill-name">程式語言 & 開發工具</div>
+          </div>
+          <ul class="skill-list">
+            <li><b>Python</b> 開發，熟悉 PyTorch、HuggingFace、PEFT 等深度學習生態系</li>
+            <li><b>REST API</b> 串接與呼叫（OpenAI SDK、vLLM、Ollama）</li>
+            <li>版本控制與容器化：<b>Git / GitHub / Docker</b></li>
+            <li><b>n8n 工作流</b> 設計與自動化串接</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">#Python</span><span class="tag">#PyTorch</span>
+            <span class="tag v">#Git</span><span class="tag v">#GitHub</span>
+            <span class="tag p">#Docker</span><span class="tag p">#n8n</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" data-delay="2">
+          <div class="skill-head">
+            <div class="skill-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div class="skill-name">系統與基礎設施</div>
+          </div>
+          <ul class="skill-list">
+            <li>網路通訊基礎：<b>HTTP、TCP/IP、DNS</b> 協定</li>
+            <li>作業系統與平台：<b>Windows、Linux、Microsoft Azure</b></li>
+            <li>具備 GPU 環境設置與本地模型服務化經驗</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">#Microsoft Azure</span><span class="tag v">#Linux</span>
+            <span class="tag p">#GPU</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" data-delay="3">
+          <div class="skill-head">
+            <div class="skill-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="skill-name">研究與資料科學</div>
+          </div>
+          <ul class="skill-list">
+            <li>MATLAB → Python 演算法重構與模組化封裝</li>
+            <li>數值科學工具：<b>NumPy、Matplotlib</b></li>
+            <li>機器學習：<b>XGBoost、Random Forest</b>、SMOTE 不平衡資料處理</li>
+            <li>特徵工程與壓力測試經驗</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">#NumPy</span><span class="tag">#Matplotlib</span>
+            <span class="tag v">#XGBoost</span><span class="tag p">#MATLAB</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="sec-tag">03 — Projects</div>
+        <h2 class="sec-title">專案 <span class="grad">成果</span></h2>
+        <p class="sec-sub">從 LLM 微調、多模態工作流、物理模擬到機器學習壓力測試，每個專案皆有可量化的工程成果。</p>
+      </div>
+
+      <div class="projects-grid">
+        <div class="proj-card reveal">
+          <div class="proj-head">
+            <div class="proj-title">RAG 文件檢索強化實作</div>
+            <span class="proj-date">2026/02 – 03</span>
+          </div>
+          <div class="proj-stack">Python · PyTorch · HuggingFace · PEFT (LoRA) · Docker</div>
+          <ul class="proj-list">
+            <li>設計 VRAM 分時機制，使 LLM 合成、負例篩選、訓練三階段於 <b>8GB GPU</b> 上順序完成</li>
+            <li>以 LoRA (r=8) 微調 BGE embedding，僅訓練 <b>0.3% 參數</b> 即完成負例 MNRL 對比學習</li>
+            <li>建構 5 階段自動化評估管線，系統性驗證最佳化策略之成效</li>
+          </ul>
+        </div>
+
+        <div class="proj-card reveal" data-delay="1">
+          <div class="proj-head">
+            <div class="proj-title">LINE 多模態 AI 助手 × n8n 工作流</div>
+            <span class="proj-date">2025/11 – 12</span>
+          </div>
+          <div class="proj-stack">Whisper · n8n · OpenRouter LLM · Google Drive API</div>
+          <ul class="proj-list">
+            <li>串接本地端 GPU 加速 Whisper 模型與雲端 n8n，實現語音轉文字、AI 製圖等多模態能力</li>
+            <li>設計 <b>非同步 Webhook 緩衝機制</b>，克服 LINE Messaging API 回應時限制</li>
+            <li>整合 OpenRouter LLM API 與 Google Drive，達成對話歷史自動歸檔與檔案管理</li>
+          </ul>
+        </div>
+
+        <div class="proj-card reveal" data-delay="2">
+          <div class="proj-head">
+            <div class="proj-title">光波導物理參數自動化 Pipeline</div>
+            <span class="proj-date">碩論專題</span>
+          </div>
+          <div class="proj-stack">Python · NumPy · Matplotlib · (原 MATLAB)</div>
+          <ul class="proj-list">
+            <li>將碩論 MATLAB 篩選邏輯重構為模組化 Python 套件，大幅提升迭代效率與可讀性</li>
+            <li>實作 Physics-guided screening：整合電場 (Er)、重疊積分 (η)、半波電壓等多項物理量進行自動篩選</li>
+            <li>自動化執行 <b>數十萬組</b> 參數組合之傳輸特性運算，產出 Top-10 排序與可視化散點圖輔助科研判讀</li>
+          </ul>
+        </div>
+
+        <div class="proj-card reveal" data-delay="3">
+          <div class="proj-head">
+            <div class="proj-title">比特幣犯罪地址偵測：不平衡資料分析</div>
+            <span class="proj-date">2025/12 – 2026/01</span>
+          </div>
+          <div class="proj-stack">Python · Scikit-learn · XGBoost · SMOTE</div>
+          <ul class="proj-list">
+            <li>以 Kaggle 比特幣交易資料集為基準，系統性比較傳統 ML 與深度學習於 class imbalance 下的表現</li>
+            <li>導入特徵工程處理長尾分布，將 38 項原始特徵壓縮為 26 項精煉特徵</li>
+            <li>SMOTE 採樣壓力測試：發現合成樣本超過 <b>50K</b> 時 Precision 開始下降之邊界</li>
+            <li>結論：稀疏結構化資料中 <b>XGBoost / Random Forest 的 F1 表現優於深度學習模型</b></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION & EXPERIENCE -->
+  <section id="education">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="sec-tag">04 — Journey</div>
+        <h2 class="sec-title">學歷 <span class="grad">與經歷</span></h2>
+        <p class="sec-sub">從光電所的物理研究到 AI 架構師培訓的工程實踐，累積跨領域問題解決能力。</p>
+      </div>
+
+      <div class="two-col">
+        <div class="reveal">
+          <h3 style="font-family:'Orbitron','Noto Sans TC',sans-serif;font-size:20px;margin-bottom:24px;color:var(--text-0);">
+            <span style="color:var(--cyan);font-family:'JetBrains Mono',monospace;">[ EDU ]</span> 學歷
+          </h3>
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-date">2023/09 — 2025/07</div>
+              <div class="tl-title">碩士 · 光電科學與工程學系</div>
+              <div class="tl-org">國立中央大學<span class="sep">|</span>桃園・中壢</div>
+              <div class="tl-body">
+                以光波導模擬為主題，發展 Physics-guided 自動化篩選 pipeline，
+                從 MATLAB 全面遷移至 Python 模組化架構，培養大量參數空間探索與工程化研究能力。
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">進修中</div>
+              <div class="tl-title">群聯 × 陽明交大 AI 架構師培訓</div>
+              <div class="tl-org">PHISON × NYCU<span class="sep">|</span>生成式 AI 技術深耕</div>
+              <div class="tl-body">
+                系統性學習 LLM 部署、微調、RAG、Agent 等核心技術，
+                並透過多個自主專案驗證實作能力。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal" data-delay="1">
+          <h3 style="font-family:'Orbitron','Noto Sans TC',sans-serif;font-size:20px;margin-bottom:24px;color:var(--text-0);">
+            <span style="color:var(--violet);font-family:'JetBrains Mono',monospace;">[ EXP ]</span> 工作經歷
+          </h3>
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-date">2024/07 — 2025/01 · 7 個月</div>
+              <div class="tl-title">光學實驗輔助教 · 助教</div>
+              <div class="tl-org">國立中央大學<span class="sep">|</span>桃園・中壢</div>
+              <div class="tl-body">
+                負責光路架設與實驗操作指導，培養學員實驗設計能力，
+                並與理論公式計算結果進行比較，強化實驗與理論之間的連結。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTS & LANG -->
+  <section id="certs">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="sec-tag">05 — Credentials</div>
+        <h2 class="sec-title">證照 <span class="grad">與語言</span></h2>
+      </div>
+
+      <div class="two-col">
+        <div class="reveal">
+          <h3 style="font-family:'Orbitron','Noto Sans TC',sans-serif;font-size:20px;margin-bottom:24px;color:var(--text-0);">
+            <span style="color:var(--cyan);font-family:'JetBrains Mono',monospace;">[ CERT ]</span> 證照
+          </h3>
+          <div class="cert-grid">
+            <div class="cert-card">
+              <div class="cert-logo">AI<br/>900</div>
+              <div>
+                <div class="cert-name">Microsoft AI-900</div>
+                <div class="cert-meta">AI 與人工智慧基礎認證</div>
+              </div>
+            </div>
+            <div class="cert-card">
+              <div class="cert-logo" style="color:var(--violet);">NYCU</div>
+              <div>
+                <div class="cert-name">陽明交大半導體學程</div>
+                <div class="cert-meta">授課證書</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal" data-delay="1">
+          <h3 style="font-family:'Orbitron','Noto Sans TC',sans-serif;font-size:20px;margin-bottom:24px;color:var(--text-0);">
+            <span style="color:var(--violet);font-family:'JetBrains Mono',monospace;">[ LANG ]</span> 語言能力
+          </h3>
+          <div class="card">
+            <div class="lang-row">
+              <span class="lang-name">中文</span>
+              <span class="lang-bar"><i style="width:100%"></i></span>
+              <span class="lang-level">Native</span>
+            </div>
+            <div class="lang-row">
+              <span class="lang-name">英文 (聽)</span>
+              <span class="lang-bar"><i style="width:62%"></i></span>
+              <span class="lang-level">中等</span>
+            </div>
+            <div class="lang-row">
+              <span class="lang-name">英文 (說)</span>
+              <span class="lang-bar"><i style="width:62%"></i></span>
+              <span class="lang-level">中等</span>
+            </div>
+            <div class="lang-row">
+              <span class="lang-name">英文 (讀)</span>
+              <span class="lang-bar"><i style="width:62%"></i></span>
+              <span class="lang-level">中等</span>
+            </div>
+            <div class="lang-row">
+              <span class="lang-name">英文 (寫)</span>
+              <span class="lang-bar"><i style="width:40%"></i></span>
+              <span class="lang-level">略懂</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="wrap">
+      <div class="contact-card reveal">
+        <div class="sec-tag" style="justify-content:center;display:inline-flex;">06 — Let's connect</div>
+        <h3>讓我們<span class="grad" style="background:var(--grad-main);-webkit-background-clip:text;background-clip:text;color:transparent;">一起打造 AI 解決方案</span></h3>
+        <p>無論是 LLM 部署、RAG 系統設計、模型微調，或是想交流生成式 AI 的最新進展，歡迎隨時與我聯繫。</p>
+        <div class="contact-links">
+          <a href="mailto:baodianliang@gmail.com" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            baodianliang@gmail.com
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      © 2026 Ke Hao-Liang · Built with HTML / CSS / JS · &lt;/ AI Engineer Portfolio &gt;
+    </div>
+  </footer>
+
+<script>
+  /* ===== Neural network background ===== */
+  (function () {
+    const canvas = document.getElementById('neural-bg');
+    const ctx = canvas.getContext('2d');
+    let w, h, dpr;
+    let nodes = [];
+    const motionOK = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const density = w < 700 ? 38 : w < 1200 ? 70 : 95;
+      nodes = Array.from({ length: density }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        r: Math.random() * 1.8 + 0.6,
+      }));
+    }
+
+    function step() {
+      ctx.clearRect(0, 0, w, h);
+      const maxDist = w < 700 ? 110 : 150;
+
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+        n.x += n.vx;
+        n.y += n.vy;
+        if (n.x < 0 || n.x > w) n.vx *= -1;
+        if (n.y < 0 || n.y > h) n.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(34, 211, 238, 0.55)';
+        ctx.fill();
+      }
+
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i], b = nodes[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < maxDist) {
+            const alpha = (1 - d / maxDist) * 0.32;
+            const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+            grad.addColorStop(0, `rgba(34, 211, 238, ${alpha})`);
+            grad.addColorStop(1, `rgba(168, 85, 247, ${alpha})`);
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 0.9;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+      if (motionOK) requestAnimationFrame(step);
+    }
+
+    resize();
+    window.addEventListener('resize', () => { resize(); if (!motionOK) step(); });
+    step();
+  })();
+
+  /* ===== Reveal on scroll ===== */
+  (function () {
+    const els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(el => el.classList.add('visible'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(el => io.observe(el));
+  })();
+
+  /* ===== Nav scroll spy + mobile toggle ===== */
+  (function () {
+    const toggle = document.getElementById('navToggle');
+    const links = document.getElementById('navLinks');
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('open');
+      links.classList.toggle('open');
+    });
+    links.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        toggle.classList.remove('open');
+        links.classList.remove('open');
+      });
+    });
+
+    const sections = ['about', 'skills', 'projects', 'education', 'certs', 'contact']
+      .map(id => document.getElementById(id))
+      .filter(Boolean);
+    const navMap = {};
+    links.querySelectorAll('a').forEach(a => {
+      const id = a.getAttribute('href').slice(1);
+      navMap[id] = a;
+    });
+
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          Object.values(navMap).forEach(n => n.classList.remove('active'));
+          const id = e.target.id;
+          if (navMap[id]) navMap[id].classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach(s => spy.observe(s));
+  })();
+</script>
+</body>
+</html>
